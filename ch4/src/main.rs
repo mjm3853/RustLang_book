@@ -79,6 +79,51 @@ fn main() {
     let (o2, len) = calculate_length(o1);
 
     println!("The length of '{}' is {}", o2, len);
+
+    /// References and Borrowing
+    /// Functions can take references instead of ownership
+    /// & is used for references
+    /// * is used for the opposite, dereferencing. see ch8 and ch15
+    /// References are immutable by default
+    
+    let b1 = String::from("hello there");
+    let blen = calculate_length_borrow(&b1);
+
+    println!("The length of '{}' is {}", b1, blen);
+
+    /// Initial variable can be made mutable
+    /// The function can take a mutable reference
+    /// Restriction - only one mutable reference per scope
+    /// Another Restriction - cannot combine mut and immutable refs
+
+    let mut r = String::from("hello");
+
+    println!("Not Mutated: {}", r);
+    change_ref(&mut r);
+    println!("Mutated: {}", r);
+
+    /// Curly braces can create new scopes for multiple mutable refs
+    {
+        let r1 = &mut r;
+        println!("New scoped: {}", r1);
+    }
+
+    let r2 = &mut r;
+    println!("Original scoped: {}", r2);
+
+    /// Dangling References / Pointers
+    /// Pointer referencing location in memory given to someone else
+    /// Rust ensures data does not go out of scope before ref to data does
+    
+    // let reference_to_nothing = dangle();
+
+    let reference_to_something = no_dangle();
+
+    /// Rules of References
+    /// 1. You can have either one mutable reference or any number of immutable
+    /// 2. References must always be valid
+
+
 }
 
 fn takes_ownership(some_string: String) {
@@ -102,4 +147,22 @@ fn takes_and_gives_back(a_string: String) -> String {
 fn calculate_length(s: String) -> (String, usize) {
     let length = s.len(); // returns length of the string
     (s, length)
+}
+
+fn calculate_length_borrow(s: &String) -> usize {
+    s.len()
+}
+
+fn change_ref(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+
+// fn dangle() -> &String { // returns a ref to a string
+    // let s = String::from("hello"); // new string
+    // &s // return a ref to s which goes out of scope when function is done
+// }
+
+fn no_dangle() -> String {
+    let s = String::from("hello");
+    s
 }
